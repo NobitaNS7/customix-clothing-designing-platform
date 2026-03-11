@@ -63,7 +63,8 @@ background:#ff2a2a;
 <br><br>
 
 <button onclick="addText()">Add Text</button>
-
+<input type="file" id="uploadImage">
+  <button onclick="addImage()">Add Image</button>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.2.4/fabric.min.js"></script>
 
 <script>
@@ -81,7 +82,27 @@ fontSize: 30
 canvas.add(text);
 
 }
+function addImage() {
 
+var input = document.getElementById("uploadImage");
+
+var reader = new FileReader();
+
+reader.onload = function (event) {
+
+fabric.Image.fromURL(event.target.result, function(img) {
+
+img.scaleToWidth(150);
+
+canvas.add(img);
+
+});
+
+}
+
+reader.readAsDataURL(input.files[0]);
+
+}
 </script>
 </body>
 </html>
