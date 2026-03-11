@@ -56,6 +56,32 @@ background:#ff2a2a;
 <button>Start Designing</button>
 
 </div>
+<h2>Design Area</h2>
 
+<canvas id="designCanvas" width="400" height="400" style="border:1px solid black"></canvas>
+
+<br><br>
+
+<button onclick="addText()">Add Text</button>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.2.4/fabric.min.js"></script>
+
+<script>
+
+var canvas = new fabric.Canvas('designCanvas');
+
+function addText() {
+
+var text = new fabric.Text('Your Design', {
+left: 150,
+top: 150,
+fontSize: 30
+});
+
+canvas.add(text);
+
+}
+
+</script>
 </body>
 </html>
