@@ -122,7 +122,7 @@ background:#ff2a2a;
 
 <div style="position:relative;width :400px;height :400px;margin :auto">
 
-<img src="https://cdn-icons-png.flaticon.com/512/892/892458.png"
+<img id="tshirt" src="https://cdn-icons-png.flaticon.com/512/892/892458.png"
 style="position:absolute;width:400px;height:400px;left:0;top:0;">
   
 <canvas id="designCanvas" width="400" height="400"
@@ -130,7 +130,15 @@ style="position:absolute;left:0;top:0;"></canvas>
 
 </div>
 <br><br>
+<br><br>
 
+<button onclick="changeColor('white')">White</button>
+<button onclick="changeColor('black')">Black</button>
+<button onclick="changeColor('red')">Red</button>
+<button onclick="changeColor('blue')">Blue</button>
+<button onclick="changeColor('green')">Green</button>
+<button onclick="changeColor('yellow')">Yellow</button>
+<button onclick="changeColor('purple')">Purple</button>
 <button onclick="addText()">Add Text</button>
 <input type="file" id="uploadImage">
   <button onclick="addImage()">Add Image</button>
@@ -172,6 +180,40 @@ canvas.add(img);
 reader.readAsDataURL(input.files[0]);
 
 }
+function changeColor(color){
+
+var tshirt = document.getElementById("tshirt");
+
+if(color=="white"){
+tshirt.src="https://cdn-icons-png.flaticon.com/512/892/892458.png";
+}
+
+if(color=="black"){
+tshirt.src="https://cdn-icons-png.flaticon.com/512/892/892459.png";
+}
+
+if(color=="red"){
+tshirt.src="https://cdn-icons-png.flaticon.com/512/892/892463.png";
+}
+
+if(color=="blue"){
+tshirt.src="https://cdn-icons-png.flaticon.com/512/892/892462.png";
+}
+
+if(color=="green"){
+tshirt.src="https://cdn-icons-png.flaticon.com/512/892/892461.png";
+}
+
+if(color=="yellow"){
+tshirt.src="https://cdn-icons-png.flaticon.com/512/892/892460.png";
+}
+
+if(color=="purple"){
+tshirt.src="https://cdn-icons-png.flaticon.com/512/892/892464.png";
+}
+
+}
+  
 </script>
 </body>
 </html>
