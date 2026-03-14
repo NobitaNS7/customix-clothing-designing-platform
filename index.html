@@ -85,7 +85,7 @@ style="position:absolute;left:0;top:0;"></canvas>
 
 <input type="file" id="uploadImage">
 <button onclick="addImage()">Add Image</button>
-
+<button onclick="deleteObject()">Delete Selected</button>
 <br><br>
 
 <button onclick="downloadDesign()">Download My Design</button>
@@ -212,7 +212,16 @@ link.download="my-design.png";
 link.click();
 
 }
+  
+function deleteObject(){
 
+var activeObject = canvas.getActiveObject();
+
+if(activeObject){
+canvas.remove(activeObject);
+}
+
+}
 </script>
 
 </body>
