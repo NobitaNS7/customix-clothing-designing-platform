@@ -186,36 +186,56 @@ item.src="https://cdn-icons-png.flaticon.com/512/892/892458.png";
 }
 
 if(product=="hoodie"){
-item.src="https://cdn-icons-png.flaticon.com/512/892/892473.png";
+item.src="https://cdn-icons-png.flaticon.com/512/1867/1867564.png";
 }
 
 if(product=="shoes"){
-item.src="https://cdn-icons-png.flaticon.com/512/892/892472.png";
+item.src="https://cdn-icons-png.flaticon.com/512/2589/2589903.png";
 }
 
 if(product=="cap"){
-item.src="https://cdn-icons-png.flaticon.com/512/892/892471.png";
+item.src="https://cdn-icons-png.flaticon.com/512/1974/1974210.png";
 }
 
 if(product=="towel"){
-item.src="https://cdn-icons-png.flaticon.com/512/3075/3075977.png";
+item.src="https://cdn-icons-png.flaticon.com/512/2936/2936886.png";
 }
 
 }
 function downloadDesign(){
 
-var dataURL = canvas.toDataURL({
-format:'png' ,
-multiplier:2  
-});
+var tshirt = document.getElementById("tshirt");
 
-var link=document.createElement('a');
+var tempCanvas = document.createElement("canvas");
+tempCanvas.width = 400;
+tempCanvas.height = 400;
 
-link.href=dataURL;
+var ctx = tempCanvas.getContext("2d");
 
+var shirtImage = new Image();
+shirtImage.crossOrigin="anonymous";
+
+shirtImage.onload = function(){
+
+ctx.drawImage(shirtImage,0,0,400,400);
+
+var designImage = new Image();
+designImage.src = canvas.toDataURL("image/png");
+
+designImage.onload = function(){
+
+ctx.drawImage(designImage,0,0);
+
+var link=document.createElement("a");
 link.download="my-design.png";
-
+link.href=tempCanvas.toDataURL("image/png");
 link.click();
+
+}
+
+}
+
+shirtImage.src = tshirt.src;
 
 }
   
