@@ -50,7 +50,13 @@ background:#ff2a2a;
 <h2>Design Your Own T-Shirt</h2>
 <p>Create custom designs with AI and preview them.</p>
 </div>
+<h2>Select Product</h2>
 
+<button onclick="changeProduct('tshirt')">T-Shirt</button>
+<button onclick="changeProduct('hoodie')">Hoodie</button>
+<button onclick="changeProduct('shoes')">Shoes</button>
+<button onclick="changeProduct('cap')">Cap</button>
+<button onclick="changeProduct('towel')">Towel</button>
 <h2>Design Area</h2>
 
 <div style="position:relative;width:400px;height:400px;margin:auto">
@@ -157,7 +163,31 @@ tshirt.src="https://cdn-icons-png.flaticon.com/512/892/892464.png";
 }
 
 }
+function changeProduct(product){
 
+var item = document.getElementById("tshirt");
+
+if(product=="tshirt"){
+item.src="https://cdn-icons-png.flaticon.com/512/892/892458.png";
+}
+
+if(product=="hoodie"){
+item.src="https://cdn-icons-png.flaticon.com/512/892/892473.png";
+}
+
+if(product=="shoes"){
+item.src="https://cdn-icons-png.flaticon.com/512/892/892472.png";
+}
+
+if(product=="cap"){
+item.src="https://cdn-icons-png.flaticon.com/512/892/892471.png";
+}
+
+if(product=="towel"){
+item.src="https://cdn-icons-png.flaticon.com/512/3075/3075977.png";
+}
+
+}
 function downloadDesign(){
 
 var dataURL = canvas.toDataURL({
