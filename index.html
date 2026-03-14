@@ -108,6 +108,7 @@ selectable:false
 });
 
 canvas.add(printArea);
+printArea.sendToBack();  
 function addText(){
 
 var text = new fabric.IText('Your Design',{
@@ -175,15 +176,7 @@ tshirt.src="https://cdn-icons-png.flaticon.com/512/892/892464.png";
 }
 
 }
-function changeProduct(product){
 
-var item = document.getElementById("tshirt");
-
-if(product=="tshirt"){
-// keep the same image you already have
-}
-
-}
 function changeProduct(product){
 
 var item = document.getElementById("tshirt");
@@ -212,7 +205,8 @@ item.src="https://cdn-icons-png.flaticon.com/512/3075/3075977.png";
 function downloadDesign(){
 
 var dataURL = canvas.toDataURL({
-format:'png'
+format:'png' ,
+multiplier:2  
 });
 
 var link=document.createElement('a');
