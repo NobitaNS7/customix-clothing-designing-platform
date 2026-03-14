@@ -222,6 +222,16 @@ canvas.remove(activeObject);
 }
 
 }
+canvas.on('mouse:dblclick', function(options){
+
+var obj = options.target;
+
+if(obj && obj.type === 'i-text'){
+obj.enterEditing();
+obj.selectAll();
+}
+
+});  
 </script>
 
 </body>
