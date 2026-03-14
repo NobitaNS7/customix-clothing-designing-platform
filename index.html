@@ -95,7 +95,19 @@ style="position:absolute;left:0;top:0;"></canvas>
 <script>
 
 var canvas = new fabric.Canvas('designCanvas');
+  
+var printArea = new fabric.Rect({
+left:120,
+top:120,
+width:160,
+height:160,
+fill:'transparent',
+stroke:'black',
+strokeDashArray:[5,5],
+selectable:false
+});
 
+canvas.add(printArea);
 function addText(){
 
 var text = new fabric.IText('Your Design',{
