@@ -181,30 +181,12 @@ function changeProduct(product){
 
 var item = document.getElementById("tshirt");
 
-if(product=="tshirt"){
+// Only keep T-shirt for now
 item.src="https://cdn-icons-png.flaticon.com/512/892/892458.png";
-}
 
-if(product=="hoodie"){
-item.src="https://cdn-icons-png.flaticon.com/512/1867/1867564.png";
 }
-
-if(product=="shoes"){
-item.src="https://cdn-icons-png.flaticon.com/512/2589/2589903.png";
-}
-
-if(product=="cap"){
-item.src="https://cdn-icons-png.flaticon.com/512/1974/1974210.png";
-}
-
-if(product=="towel"){
-item.src="https://cdn-icons-png.flaticon.com/512/2936/2936886.png";
-}
-
 }
 function downloadDesign(){
-
-var tshirt = document.getElementById("tshirt");
 
 var tempCanvas = document.createElement("canvas");
 tempCanvas.width = 400;
@@ -212,30 +194,37 @@ tempCanvas.height = 400;
 
 var ctx = tempCanvas.getContext("2d");
 
-var shirtImage = new Image();
-shirtImage.crossOrigin="anonymous";
+// Convert HTML image into canvas (safe way)
+var tshirt = document.getElementById("tshirt");
 
-shirtImage.onload = function(){
+ctx.fillStyle = "#ffffff";
+ctx.fillRect(0,0,400,400);
 
-ctx.drawImage(shirtImage,0,0,400,400);
+// Draw shirt using canvas image copy
+var img = new Image();
+img.crossOrigin = "anonymous";
+img.src = tshirt.src;
 
-var designImage = new Image();
-designImage.src = canvas.toDataURL("image/png");
+img.onload = function(){
 
-designImage.onload = function(){
+ctx.drawImage(img,0,0,400,400);
 
-ctx.drawImage(designImage,0,0);
+// Draw design layer
+var design = new Image();
+design.src = canvas.toDataURL("image/png");
 
-var link=document.createElement("a");
-link.download="my-design.png";
-link.href=tempCanvas.toDataURL("image/png");
+design.onload = function(){
+
+ctx.drawImage(design,0,0);
+
+var link = document.createElement("a");
+link.download = "customix-design.png";
+link.href = tempCanvas.toDataURL("image/png");
 link.click();
 
 }
 
 }
-
-shirtImage.src = tshirt.src;
 
 }
   
