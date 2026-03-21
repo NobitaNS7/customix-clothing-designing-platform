@@ -104,7 +104,8 @@ height:160,
 fill:'transparent',
 stroke:'black',
 strokeDashArray:[5,5],
-selectable:false
+selectable:false,
+evented:false
 });
 
 canvas.add(printArea);
@@ -185,7 +186,7 @@ var item = document.getElementById("tshirt");
 item.src="https://cdn-icons-png.flaticon.com/512/892/892458.png";
 
 }
-}
+
 function downloadDesign(){
 
 var tempCanvas = document.createElement("canvas");
