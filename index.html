@@ -274,21 +274,37 @@ body {
   padding: 30px;
   background: var(--bg);
 }
+
 .canvas-wrap {
   position: relative;
-  width: 420px; height: 420px;
+  width: 420px;
+  height: 420px;
   background: #1c1c1c;
   border-radius: 16px;
   border: 1px solid var(--border);
-  overflow: hidden;
   box-shadow: 0 0 60px rgba(255,59,59,0.08);
 }
+
 #product-svg {
-  position: absolute; left: 0; top: 0;
+  position: absolute;
+  left: 0; top: 0;
   width: 420px; height: 420px;
-  pointer-events: none; z-index: 1;
+  pointer-events: none;
+  z-index: 1;
+  border-radius: 16px;
 }
-#designCanvas { position: absolute; left: 0; top: 0; z-index: 2; }
+
+.canvas-wrap .canvas-container {
+  position: absolute !important;
+  left: 0 !important;
+  top: 0 !important;
+  z-index: 10 !important;
+}
+
+.canvas-wrap .upper-canvas {
+  cursor: default !important;
+  z-index: 11 !important;
+}
 
 .tools-row {
   display: flex; gap: 10px;
@@ -310,6 +326,32 @@ body {
 }
 .tool-btn:hover { border-color: var(--accent); color: var(--accent); }
 .tool-btn.danger:hover { border-color: #ff4444; color: #ff4444; }
+
+.text-options {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.text-color-btn {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: transform 0.15s, border-color 0.15s;
+}
+.text-color-btn:hover { transform: scale(1.15); border-color: white; }
+.font-select {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  padding: 4px 8px;
+  font-size: 0.82rem;
+  cursor: pointer;
+}
 
 .download-btn {
   margin-top: 16px;
@@ -362,7 +404,7 @@ body {
 }
 .file-label:hover { border-color: var(--accent); color: var(--accent); }
 #uploadImage { display: none; }
-.hint { font-size: 0.75rem; color: var(--muted); margin-top: 12px; text-align: center; }
+.hint { font-size: 0.75rem; color: var(--muted); margin-top: 12px; text-align: center; line-height: 1.8; }
 
 .page-fade-in { animation: fadeIn 0.5s ease; }
 @keyframes fadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
@@ -382,20 +424,11 @@ body {
     <h1>DESIGN YOUR<br><span>OWN STYLE</span></h1>
     <p class="hero-sub">Create custom clothing designs with AI. Pick your product, choose your color, add text or images — and download instantly.</p>
     <button class="start-btn" onclick="goToStudio()">START DESIGNING</button>
-
     <div class="product-strip">
-      <div class="product-card" onclick="goToStudio('tshirt')">
-        <span class="icon">👕</span><span class="label">T-Shirt</span>
-      </div>
-      <div class="product-card" onclick="goToStudio('hoodie')">
-        <span class="icon">🧥</span><span class="label">Hoodie</span>
-      </div>
-      <div class="product-card" onclick="goToStudio('shoes')">
-        <span class="icon">👟</span><span class="label">Shoes</span>
-      </div>
-      <div class="product-card" onclick="goToStudio('cap')">
-        <span class="icon">🧢</span><span class="label">Cap</span>
-      </div>
+      <div class="product-card" onclick="goToStudio('tshirt')"><span class="icon">👕</span><span class="label">T-Shirt</span></div>
+      <div class="product-card" onclick="goToStudio('hoodie')"><span class="icon">🧥</span><span class="label">Hoodie</span></div>
+      <div class="product-card" onclick="goToStudio('shoes')"><span class="icon">👟</span><span class="label">Shoes</span></div>
+      <div class="product-card" onclick="goToStudio('cap')"><span class="icon">🧢</span><span class="label">Cap</span></div>
       <div class="product-card" onclick="goToStudio('towel')">
         <div class="hk-icon">
           <svg width="36" height="36" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
@@ -418,7 +451,6 @@ body {
     <div class="feature"><div class="f-icon">⬇️</div><h3>Download Free</h3><p>Save your design as a PNG instantly</p></div>
     <div class="feature"><div class="f-icon">✨</div><h3>AI Ideas</h3><p>Get AI-generated design text ideas</p></div>
   </div>
-
   <footer class="footer">© 2024 Customix — AI Powered Custom Clothing Platform</footer>
 </div>
 
@@ -433,19 +465,11 @@ body {
 
     <div class="left-panel">
       <div class="panel-title">Product</div>
-      <button class="product-btn active" id="btn-tshirt" onclick="changeProduct('tshirt', this)">
-        <span class="p-icon">👕</span> T-Shirt
-      </button>
-      <button class="product-btn" id="btn-hoodie" onclick="changeProduct('hoodie', this)">
-        <span class="p-icon">🧥</span> Hoodie
-      </button>
-      <button class="product-btn" id="btn-shoes" onclick="changeProduct('shoes', this)">
-        <span class="p-icon">👟</span> Shoes
-      </button>
-      <button class="product-btn" id="btn-cap" onclick="changeProduct('cap', this)">
-        <span class="p-icon">🧢</span> Cap
-      </button>
-      <button class="product-btn" id="btn-towel" onclick="changeProduct('towel', this)">
+      <button class="product-btn active" id="btn-tshirt" onclick="changeProduct('tshirt',this)"><span class="p-icon">👕</span> T-Shirt</button>
+      <button class="product-btn" id="btn-hoodie" onclick="changeProduct('hoodie',this)"><span class="p-icon">🧥</span> Hoodie</button>
+      <button class="product-btn" id="btn-shoes" onclick="changeProduct('shoes',this)"><span class="p-icon">👟</span> Shoes</button>
+      <button class="product-btn" id="btn-cap" onclick="changeProduct('cap',this)"><span class="p-icon">🧢</span> Cap</button>
+      <button class="product-btn" id="btn-towel" onclick="changeProduct('towel',this)">
         <span class="p-icon">
           <svg width="22" height="22" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
             <path d="M8,5 L48,5 L48,52 L38,52 L8,52 Z" fill="#ffffff" stroke="#cccccc" stroke-width="2"/>
@@ -473,18 +497,42 @@ body {
     </div>
 
     <div class="center">
-      <div class="canvas-wrap">
+      <div class="canvas-wrap" id="canvas-wrap">
         <svg id="product-svg" viewBox="0 0 420 420" xmlns="http://www.w3.org/2000/svg"></svg>
         <canvas id="designCanvas" width="420" height="420"></canvas>
       </div>
+
+      <div class="text-options">
+        <span style="font-size:0.8rem;color:var(--muted)">Text color:</span>
+        <div class="text-color-btn" style="background:#ffffff;border-color:#555" onclick="setTextColor('#ffffff')" title="White"></div>
+        <div class="text-color-btn" style="background:#111111;border-color:#555" onclick="setTextColor('#111111')" title="Black"></div>
+        <div class="text-color-btn" style="background:#ff3b3b" onclick="setTextColor('#ff3b3b')" title="Red"></div>
+        <div class="text-color-btn" style="background:#1e5ef3" onclick="setTextColor('#1e5ef3')" title="Blue"></div>
+        <div class="text-color-btn" style="background:#f5c518" onclick="setTextColor('#f5c518')" title="Yellow"></div>
+        <div class="text-color-btn" style="background:#20a840" onclick="setTextColor('#20a840')" title="Green"></div>
+        <select class="font-select" id="fontSelect" onchange="setFont(this.value)">
+          <option value="Arial">Arial</option>
+          <option value="Georgia">Georgia</option>
+          <option value="Courier New">Courier New</option>
+          <option value="Impact">Impact</option>
+          <option value="Verdana">Verdana</option>
+          <option value="Times New Roman">Times New Roman</option>
+        </select>
+      </div>
+
       <div class="tools-row">
         <button class="tool-btn" onclick="addText()">✏️ Add Text</button>
         <label class="tool-btn" for="uploadImage">🖼️ Upload Image</label>
         <input type="file" id="uploadImage" accept="image/*" onchange="addImage()">
+        <button class="tool-btn" onclick="bringForward()">⬆ Forward</button>
+        <button class="tool-btn" onclick="sendBackward()">⬇ Back</button>
         <button class="tool-btn danger" onclick="deleteObject()">🗑️ Delete</button>
       </div>
       <button class="download-btn" onclick="downloadDesign()">⬇ DOWNLOAD DESIGN</button>
-      <p class="hint">Double-click text to edit • Drag to move • Use print area as guide</p>
+      <p class="hint">
+        ✅ Click to select &nbsp;|&nbsp; Drag to move &nbsp;|&nbsp; Corner handles to resize<br>
+        ✅ Double-click text to edit &nbsp;|&nbsp; Select text then pick color/font above
+      </p>
     </div>
 
     <div class="right-panel">
@@ -496,11 +544,14 @@ body {
       <div class="panel-title" style="margin-top:20px">Upload Art</div>
       <label class="file-label" for="uploadImage">📁 Click to upload image / logo</label>
       <div class="panel-title" style="margin-top:20px">Tips</div>
-      <p style="font-size:0.82rem;color:var(--muted);line-height:1.7">
-        • Select a product, then pick a color<br>
-        • Place designs inside the dotted area<br>
-        • Double-click text to edit it<br>
-        • Download saves your full design as PNG
+      <p style="font-size:0.82rem;color:var(--muted);line-height:1.8">
+        • Select product → pick color<br>
+        • Click Add Text → text appears<br>
+        • Double-click text to type/edit<br>
+        • Drag text/images freely anywhere<br>
+        • Corner handles = resize<br>
+        • Use Forward/Back to layer objects<br>
+        • Download saves full design as PNG
       </p>
     </div>
 
@@ -536,17 +587,37 @@ function goToLanding() {
 }
 
 function initStudio() {
-  fabricCanvas = new fabric.Canvas('designCanvas', { preserveObjectStacking: true });
+  fabricCanvas = new fabric.Canvas('designCanvas', {
+    preserveObjectStacking: true,
+    selection: true
+  });
+
+  var canvasContainer = fabricCanvas.getElement().parentNode;
+  canvasContainer.style.position = 'absolute';
+  canvasContainer.style.left = '0';
+  canvasContainer.style.top = '0';
+  canvasContainer.style.zIndex = '10';
+
   printArea = new fabric.Rect({
     left:145, top:140, width:140, height:170,
-    fill:'transparent', stroke:'rgba(255,255,255,0.3)',
-    strokeDashArray:[5,5], selectable:false, evented:false
+    fill:'transparent',
+    stroke:'rgba(255,255,255,0.3)',
+    strokeDashArray:[5,5],
+    selectable:false,
+    evented:false,
+    excludeFromExport:true
   });
   fabricCanvas.add(printArea);
+
   fabricCanvas.on('mouse:dblclick', function(opt) {
     var obj = opt.target;
-    if (obj && obj.type === 'i-text') { obj.enterEditing(); obj.selectAll(); fabricCanvas.renderAll(); }
+    if (obj && obj.type === 'i-text') {
+      obj.enterEditing();
+      obj.selectAll();
+      fabricCanvas.renderAll();
+    }
   });
+
   renderProduct();
 }
 
@@ -557,7 +628,7 @@ function adjustColor(hex, amount) {
   r = Math.min(255,Math.max(0,r+amount));
   g = Math.min(255,Math.max(0,g+amount));
   b = Math.min(255,Math.max(0,b+amount));
-  return '#'+[r,g,b].map(v=>v.toString(16).padStart(2,'0')).join('');
+  return '#'+[r,g,b].map(function(v){ return v.toString(16).padStart(2,'0'); }).join('');
 }
 
 var svgShapes = {
@@ -601,7 +672,10 @@ function changeProduct(product, btn) {
     towel:  { left:110, top:80,  width:120, height:260 }
   };
   var a = areas[product] || areas.tshirt;
-  if (printArea) { printArea.set({ left:a.left, top:a.top, width:a.width, height:a.height }); fabricCanvas.renderAll(); }
+  if (printArea) {
+    printArea.set({ left:a.left, top:a.top, width:a.width, height:a.height });
+    fabricCanvas.renderAll();
+  }
   renderProduct();
 }
 
@@ -613,12 +687,32 @@ function changeColor(color, swatch) {
 }
 
 function addText() {
-  var text = new fabric.IText('Your Text', {
-    left:185, top:190, fontSize:28,
-    fill:'#ffffff', fontFamily:'Arial', fontWeight:'bold'
+  var text = new fabric.IText('Double-click to edit', {
+    left:140, top:180, fontSize:26,
+    fill:'#ffffff',
+    fontFamily: document.getElementById('fontSelect').value,
+    fontWeight:'bold',
+    editable:true
   });
   fabricCanvas.add(text);
   fabricCanvas.setActiveObject(text);
+  fabricCanvas.renderAll();
+}
+
+function setTextColor(color) {
+  var obj = fabricCanvas.getActiveObject();
+  if (obj && (obj.type === 'i-text' || obj.type === 'text')) {
+    obj.set('fill', color);
+    fabricCanvas.renderAll();
+  }
+}
+
+function setFont(font) {
+  var obj = fabricCanvas.getActiveObject();
+  if (obj && (obj.type === 'i-text' || obj.type === 'text')) {
+    obj.set('fontFamily', font);
+    fabricCanvas.renderAll();
+  }
 }
 
 function addImage() {
@@ -627,21 +721,38 @@ function addImage() {
   var reader = new FileReader();
   reader.onload = function(e) {
     fabric.Image.fromURL(e.target.result, function(img) {
-      img.scaleToWidth(120);
-      img.set({ left:165, top:180 });
+      img.scaleToWidth(140);
+      img.set({ left:140, top:150 });
       fabricCanvas.add(img);
       fabricCanvas.setActiveObject(img);
+      fabricCanvas.renderAll();
     });
   };
   reader.readAsDataURL(input.files[0]);
+  input.value = '';
 }
 
 function deleteObject() {
   var obj = fabricCanvas.getActiveObject();
-  if (obj && obj !== printArea) fabricCanvas.remove(obj);
+  if (obj && obj !== printArea) {
+    fabricCanvas.remove(obj);
+    fabricCanvas.renderAll();
+  }
+}
+
+function bringForward() {
+  var obj = fabricCanvas.getActiveObject();
+  if (obj && obj !== printArea) { fabricCanvas.bringForward(obj); fabricCanvas.renderAll(); }
+}
+
+function sendBackward() {
+  var obj = fabricCanvas.getActiveObject();
+  if (obj && obj !== printArea) { fabricCanvas.sendBackwards(obj); fabricCanvas.renderAll(); }
 }
 
 function downloadDesign() {
+  printArea.set('visible', false);
+  fabricCanvas.renderAll();
   var tmp = document.createElement('canvas');
   tmp.width = 420; tmp.height = 420;
   var ctx = tmp.getContext('2d');
@@ -663,6 +774,8 @@ function downloadDesign() {
       link.download = 'customix-design.png';
       link.href = tmp.toDataURL('image/png');
       link.click();
+      printArea.set('visible', true);
+      fabricCanvas.renderAll();
     };
   };
   img.src = url;
@@ -679,13 +792,25 @@ function generateAIText() {
   ];
   var chosen = variants[Math.floor(Math.random()*variants.length)];
   var text = new fabric.IText(chosen, {
-    left:160, top:185, fontSize:22,
+    left:140, top:180, fontSize:22,
     fill:'#ffffff', fontFamily:'Arial',
-    fontWeight:'bold', textAlign:'center'
+    fontWeight:'bold', textAlign:'center',
+    editable:true
   });
   fabricCanvas.add(text);
   fabricCanvas.setActiveObject(text);
+  fabricCanvas.renderAll();
 }
+
+document.addEventListener('keydown', function(e) {
+  if ((e.key === 'Delete' || e.key === 'Backspace') && fabricCanvas) {
+    var active = fabricCanvas.getActiveObject();
+    if (active && active !== printArea && active.type !== 'i-text') {
+      fabricCanvas.remove(active);
+      fabricCanvas.renderAll();
+    }
+  }
+});
 
 </script>
 </body>
