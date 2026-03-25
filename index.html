@@ -273,8 +273,10 @@ body {
   align-items: center;
   padding: 30px;
   background: var(--bg);
+  overflow: visible;
 }
 
+/* KEY FIX: canvas-wrap must NOT clip the fabric controls */
 .canvas-wrap {
   position: relative;
   width: 420px;
@@ -283,6 +285,7 @@ body {
   border-radius: 16px;
   border: 1px solid var(--border);
   box-shadow: 0 0 60px rgba(255,59,59,0.08);
+  overflow: visible; /* CRITICAL - allows rotate handle to show outside bounds */
 }
 
 #product-svg {
@@ -299,48 +302,62 @@ body {
   left: 0 !important;
   top: 0 !important;
   z-index: 10 !important;
+  overflow: visible !important;
 }
 
 .canvas-wrap .upper-canvas {
-  cursor: default !important;
   z-index: 11 !important;
+  overflow: visible !important;
+}
+
+/* Rotate buttons row */
+.rotate-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
 }
 
 .tools-row {
-  display: flex; gap: 10px;
-  margin-top: 20px;
+  display: flex; gap: 8px;
+  margin-top: 10px;
   flex-wrap: wrap;
   justify-content: center;
 }
 .tool-btn {
-  padding: 10px 18px;
+  padding: 9px 14px;
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: 8px;
   color: var(--text);
   font-family: 'DM Sans', sans-serif;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   cursor: pointer;
   transition: all 0.2s;
-  display: flex; align-items: center; gap: 6px;
+  display: flex; align-items: center; gap: 5px;
 }
 .tool-btn:hover { border-color: var(--accent); color: var(--accent); }
 .tool-btn.danger:hover { border-color: #ff4444; color: #ff4444; }
+.tool-btn.active-tool { border-color: var(--accent); background: rgba(255,59,59,0.12); color: var(--accent); }
 
+/* Text styling row */
 .text-options {
   display: flex;
   gap: 8px;
-  margin-top: 14px;
+  margin-top: 10px;
   align-items: center;
   flex-wrap: wrap;
   justify-content: center;
 }
 .text-color-btn {
-  width: 28px; height: 28px;
+  width: 26px; height: 26px;
   border-radius: 50%;
   border: 2px solid transparent;
   cursor: pointer;
   transition: transform 0.15s, border-color 0.15s;
+  flex-shrink: 0;
 }
 .text-color-btn:hover { transform: scale(1.15); border-color: white; }
 .font-select {
@@ -349,18 +366,18 @@ body {
   border-radius: 6px;
   color: var(--text);
   padding: 4px 8px;
-  font-size: 0.82rem;
+  font-size: 0.8rem;
   cursor: pointer;
 }
 
 .download-btn {
-  margin-top: 16px;
-  padding: 14px 36px;
+  margin-top: 14px;
+  padding: 13px 36px;
   background: linear-gradient(90deg, #ff3b3b, #ff7a00);
   border: none; border-radius: 10px;
   color: white;
   font-family: 'Bebas Neue', sans-serif;
-  font-size: 1.2rem; letter-spacing: 2px;
+  font-size: 1.1rem; letter-spacing: 2px;
   cursor: pointer;
   transition: opacity 0.2s, transform 0.2s;
 }
@@ -404,10 +421,13 @@ body {
 }
 .file-label:hover { border-color: var(--accent); color: var(--accent); }
 #uploadImage { display: none; }
-.hint { font-size: 0.75rem; color: var(--muted); margin-top: 12px; text-align: center; line-height: 1.8; }
+.hint { font-size: 0.72rem; color: var(--muted); margin-top: 10px; text-align: center; line-height: 1.9; }
 
 .page-fade-in { animation: fadeIn 0.5s ease; }
 @keyframes fadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+
+/* Fabric.js custom rotate cursor */
+.canvas-wrap canvas { border-radius: 16px; }
 </style>
 </head>
 <body>
@@ -463,6 +483,7 @@ body {
 
   <div class="studio-main">
 
+    <!-- LEFT PANEL -->
     <div class="left-panel">
       <div class="panel-title">Product</div>
       <button class="product-btn active" id="btn-tshirt" onclick="changeProduct('tshirt',this)"><span class="p-icon">👕</span> T-Shirt</button>
@@ -496,20 +517,36 @@ body {
       </div>
     </div>
 
+    <!-- CENTER -->
     <div class="center">
+
       <div class="canvas-wrap" id="canvas-wrap">
         <svg id="product-svg" viewBox="0 0 420 420" xmlns="http://www.w3.org/2000/svg"></svg>
         <canvas id="designCanvas" width="420" height="420"></canvas>
       </div>
 
+      <!-- ROTATE BUTTONS -->
+      <div class="rotate-row">
+        <span style="font-size:0.8rem;color:var(--muted)">Rotate:</span>
+        <button class="tool-btn" onclick="rotateBy(-45)" title="Rotate left 45°">↺ -45°</button>
+        <button class="tool-btn" onclick="rotateBy(-15)" title="Rotate left 15°">↺ -15°</button>
+        <button class="tool-btn" onclick="rotateBy(15)"  title="Rotate right 15°">↻ +15°</button>
+        <button class="tool-btn" onclick="rotateBy(45)"  title="Rotate right 45°">↻ +45°</button>
+        <button class="tool-btn" onclick="rotateBy(90)"  title="Rotate 90°">↻ 90°</button>
+        <button class="tool-btn" onclick="resetRotation()" title="Reset rotation">⊙ Reset</button>
+      </div>
+
+      <!-- TEXT OPTIONS -->
       <div class="text-options">
-        <span style="font-size:0.8rem;color:var(--muted)">Text color:</span>
+        <span style="font-size:0.8rem;color:var(--muted)">Text:</span>
         <div class="text-color-btn" style="background:#ffffff;border-color:#555" onclick="setTextColor('#ffffff')" title="White"></div>
         <div class="text-color-btn" style="background:#111111;border-color:#555" onclick="setTextColor('#111111')" title="Black"></div>
         <div class="text-color-btn" style="background:#ff3b3b" onclick="setTextColor('#ff3b3b')" title="Red"></div>
         <div class="text-color-btn" style="background:#1e5ef3" onclick="setTextColor('#1e5ef3')" title="Blue"></div>
         <div class="text-color-btn" style="background:#f5c518" onclick="setTextColor('#f5c518')" title="Yellow"></div>
         <div class="text-color-btn" style="background:#20a840" onclick="setTextColor('#20a840')" title="Green"></div>
+        <button class="tool-btn" onclick="toggleBold()" title="Bold">B</button>
+        <button class="tool-btn" onclick="toggleItalic()" title="Italic"><i>I</i></button>
         <select class="font-select" id="fontSelect" onchange="setFont(this.value)">
           <option value="Arial">Arial</option>
           <option value="Georgia">Georgia</option>
@@ -520,38 +557,44 @@ body {
         </select>
       </div>
 
+      <!-- TOOLS -->
       <div class="tools-row">
-        <button class="tool-btn" onclick="addText()">✏️ Add Text</button>
-        <label class="tool-btn" for="uploadImage">🖼️ Upload Image</label>
+        <button class="tool-btn" onclick="addText()">✏️ Text</button>
+        <label class="tool-btn" for="uploadImage">🖼️ Image</label>
         <input type="file" id="uploadImage" accept="image/*" onchange="addImage()">
-        <button class="tool-btn" onclick="bringForward()">⬆ Forward</button>
+        <button class="tool-btn" onclick="bringForward()">⬆ Fwd</button>
         <button class="tool-btn" onclick="sendBackward()">⬇ Back</button>
-        <button class="tool-btn danger" onclick="deleteObject()">🗑️ Delete</button>
+        <button class="tool-btn" onclick="duplicateObject()">⧉ Copy</button>
+        <button class="tool-btn danger" onclick="deleteObject()">🗑️ Del</button>
       </div>
+
       <button class="download-btn" onclick="downloadDesign()">⬇ DOWNLOAD DESIGN</button>
       <p class="hint">
-        ✅ Click to select &nbsp;|&nbsp; Drag to move &nbsp;|&nbsp; Corner handles to resize<br>
-        ✅ Double-click text to edit &nbsp;|&nbsp; Select text then pick color/font above
+        ✅ Click = select &nbsp;|&nbsp; Drag = move &nbsp;|&nbsp; Corner handles = resize<br>
+        ✅ Top round handle = rotate freely &nbsp;|&nbsp; Use rotate buttons above too<br>
+        ✅ Double-click text = edit &nbsp;|&nbsp; Select text → pick color/font
       </p>
     </div>
 
+    <!-- RIGHT PANEL -->
     <div class="right-panel">
       <div class="panel-title">AI Design Helper</div>
       <div class="ai-box">
-        <textarea id="aiPrompt" placeholder="Describe your design idea... e.g. 'fire dragon', 'vintage sunset', 'street logo'"></textarea>
+        <textarea id="aiPrompt" placeholder="Describe your design... e.g. 'fire dragon', 'vintage sunset', 'street logo'"></textarea>
         <button class="ai-btn" onclick="generateAIText()">✨ GENERATE IDEA</button>
       </div>
       <div class="panel-title" style="margin-top:20px">Upload Art</div>
-      <label class="file-label" for="uploadImage">📁 Click to upload image / logo</label>
+      <label class="file-label" for="uploadImage">📁 Upload image / logo</label>
       <div class="panel-title" style="margin-top:20px">Tips</div>
       <p style="font-size:0.82rem;color:var(--muted);line-height:1.8">
         • Select product → pick color<br>
-        • Click Add Text → text appears<br>
-        • Double-click text to type/edit<br>
-        • Drag text/images freely anywhere<br>
+        • Add Text → double-click to type<br>
+        • Drag freely anywhere on canvas<br>
         • Corner handles = resize<br>
-        • Use Forward/Back to layer objects<br>
-        • Download saves full design as PNG
+        • Round top handle = rotate<br>
+        • Use rotate buttons for exact angles<br>
+        • Forward/Back = layer order<br>
+        • Copy = duplicate selected object
       </p>
     </div>
 
@@ -567,6 +610,7 @@ var fabricCanvas   = null;
 var printArea      = null;
 var studioReady    = false;
 
+// ── PAGE NAV ─────────────────────────────────────
 function goToStudio(product) {
   document.getElementById('page-landing').style.display = 'none';
   var studio = document.getElementById('page-studio');
@@ -578,7 +622,6 @@ function goToStudio(product) {
     changeProduct(product, btn);
   }
 }
-
 function goToLanding() {
   document.getElementById('page-studio').style.display = 'none';
   var landing = document.getElementById('page-landing');
@@ -586,18 +629,66 @@ function goToLanding() {
   landing.classList.add('page-fade-in');
 }
 
+// ── INIT STUDIO ──────────────────────────────────
 function initStudio() {
   fabricCanvas = new fabric.Canvas('designCanvas', {
     preserveObjectStacking: true,
-    selection: true
+    selection: true,
+    controlsAboveOverlay: true  // KEY: controls render above everything
   });
 
-  var canvasContainer = fabricCanvas.getElement().parentNode;
-  canvasContainer.style.position = 'absolute';
-  canvasContainer.style.left = '0';
-  canvasContainer.style.top = '0';
-  canvasContainer.style.zIndex = '10';
+  // Force canvas container on top
+  var container = fabricCanvas.getElement().parentNode;
+  container.style.position = 'absolute';
+  container.style.left = '0';
+  container.style.top = '0';
+  container.style.zIndex = '10';
+  container.style.overflow = 'visible';
 
+  // ── CRITICAL: Enable all controls including rotate ──
+  fabric.Object.prototype.set({
+    transparentCorners: false,
+    cornerColor: '#ff3b3b',
+    cornerStrokeColor: '#ffffff',
+    borderColor: '#ff3b3b',
+    cornerSize: 12,
+    padding: 6,
+    rotatingPointOffset: 30,   // distance of rotate handle from object
+    hasRotatingPoint: true     // explicitly enable rotate handle
+  });
+
+  // Make rotate handle clearly visible
+  fabric.Object.prototype.controls.mtr = new fabric.Control({
+    x: 0,
+    y: -0.5,
+    offsetY: -40,              // 40px above the object
+    cursorStyle: 'crosshair',
+    actionHandler: fabric.controlsUtils.rotationWithSnapping,
+    actionName: 'rotate',
+    render: function(ctx, left, top, styleOverride, fabricObject) {
+      var size = 18;
+      ctx.save();
+      ctx.translate(left, top);
+      ctx.rotate(fabric.util.degreesToRadians(fabricObject.angle));
+      ctx.fillStyle = '#ff3b3b';
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(0, 0, size/2, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+      // Draw rotate arrow symbol
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 11px Arial';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('↻', 0, 0);
+      ctx.restore();
+    },
+    cornerSize: 18
+  });
+
+  // Print area
   printArea = new fabric.Rect({
     left:145, top:140, width:140, height:170,
     fill:'transparent',
@@ -605,10 +696,12 @@ function initStudio() {
     strokeDashArray:[5,5],
     selectable:false,
     evented:false,
-    excludeFromExport:true
+    excludeFromExport:true,
+    hasControls:false
   });
   fabricCanvas.add(printArea);
 
+  // Double-click to edit text
   fabricCanvas.on('mouse:dblclick', function(opt) {
     var obj = opt.target;
     if (obj && obj.type === 'i-text') {
@@ -621,6 +714,7 @@ function initStudio() {
   renderProduct();
 }
 
+// ── COLOR HELPER ─────────────────────────────────
 function adjustColor(hex, amount) {
   var r = parseInt(hex.slice(1,3),16);
   var g = parseInt(hex.slice(3,5),16);
@@ -631,6 +725,7 @@ function adjustColor(hex, amount) {
   return '#'+[r,g,b].map(function(v){ return v.toString(16).padStart(2,'0'); }).join('');
 }
 
+// ── SVG SHAPES ───────────────────────────────────
 var svgShapes = {
   tshirt: function(c) {
     return '<g fill="'+c+'" stroke="#0008" stroke-width="1.5"><path d="M120,100 L80,160 L120,170 L120,340 L300,340 L300,170 L340,160 L300,100 C300,100 275,80 255,90 C245,130 175,130 165,90 C145,80 120,100 120,100 Z"/></g>';
@@ -660,6 +755,7 @@ function renderProduct() {
   if (fn) svg.innerHTML = fn(currentColor);
 }
 
+// ── PRODUCT / COLOR ──────────────────────────────
 function changeProduct(product, btn) {
   currentProduct = product;
   document.querySelectorAll('.product-btn').forEach(function(b){ b.classList.remove('active'); });
@@ -686,6 +782,7 @@ function changeColor(color, swatch) {
   renderProduct();
 }
 
+// ── ADD TEXT ─────────────────────────────────────
 function addText() {
   var text = new fabric.IText('Double-click to edit', {
     left:140, top:180, fontSize:26,
@@ -699,6 +796,7 @@ function addText() {
   fabricCanvas.renderAll();
 }
 
+// ── TEXT STYLING ─────────────────────────────────
 function setTextColor(color) {
   var obj = fabricCanvas.getActiveObject();
   if (obj && (obj.type === 'i-text' || obj.type === 'text')) {
@@ -706,7 +804,6 @@ function setTextColor(color) {
     fabricCanvas.renderAll();
   }
 }
-
 function setFont(font) {
   var obj = fabricCanvas.getActiveObject();
   if (obj && (obj.type === 'i-text' || obj.type === 'text')) {
@@ -714,7 +811,41 @@ function setFont(font) {
     fabricCanvas.renderAll();
   }
 }
+function toggleBold() {
+  var obj = fabricCanvas.getActiveObject();
+  if (obj && (obj.type === 'i-text' || obj.type === 'text')) {
+    obj.set('fontWeight', obj.fontWeight === 'bold' ? 'normal' : 'bold');
+    fabricCanvas.renderAll();
+  }
+}
+function toggleItalic() {
+  var obj = fabricCanvas.getActiveObject();
+  if (obj && (obj.type === 'i-text' || obj.type === 'text')) {
+    obj.set('fontStyle', obj.fontStyle === 'italic' ? 'normal' : 'italic');
+    fabricCanvas.renderAll();
+  }
+}
 
+// ── ROTATE ───────────────────────────────────────
+function rotateBy(deg) {
+  var obj = fabricCanvas.getActiveObject();
+  if (obj && obj !== printArea) {
+    var current = obj.angle || 0;
+    obj.rotate((current + deg) % 360);
+    obj.setCoords();
+    fabricCanvas.renderAll();
+  }
+}
+function resetRotation() {
+  var obj = fabricCanvas.getActiveObject();
+  if (obj && obj !== printArea) {
+    obj.rotate(0);
+    obj.setCoords();
+    fabricCanvas.renderAll();
+  }
+}
+
+// ── ADD IMAGE ────────────────────────────────────
 function addImage() {
   var input = document.getElementById('uploadImage');
   if (!input.files[0]) return;
@@ -732,24 +863,31 @@ function addImage() {
   input.value = '';
 }
 
+// ── OBJECT CONTROLS ──────────────────────────────
 function deleteObject() {
   var obj = fabricCanvas.getActiveObject();
-  if (obj && obj !== printArea) {
-    fabricCanvas.remove(obj);
-    fabricCanvas.renderAll();
-  }
+  if (obj && obj !== printArea) { fabricCanvas.remove(obj); fabricCanvas.renderAll(); }
 }
-
 function bringForward() {
   var obj = fabricCanvas.getActiveObject();
   if (obj && obj !== printArea) { fabricCanvas.bringForward(obj); fabricCanvas.renderAll(); }
 }
-
 function sendBackward() {
   var obj = fabricCanvas.getActiveObject();
   if (obj && obj !== printArea) { fabricCanvas.sendBackwards(obj); fabricCanvas.renderAll(); }
 }
+function duplicateObject() {
+  var obj = fabricCanvas.getActiveObject();
+  if (!obj || obj === printArea) return;
+  obj.clone(function(cloned) {
+    cloned.set({ left: obj.left + 20, top: obj.top + 20 });
+    fabricCanvas.add(cloned);
+    fabricCanvas.setActiveObject(cloned);
+    fabricCanvas.renderAll();
+  });
+}
 
+// ── DOWNLOAD ─────────────────────────────────────
 function downloadDesign() {
   printArea.set('visible', false);
   fabricCanvas.renderAll();
@@ -781,6 +919,7 @@ function downloadDesign() {
   img.src = url;
 }
 
+// ── AI TEXT ──────────────────────────────────────
 function generateAIText() {
   var prompt = document.getElementById('aiPrompt').value.trim();
   if (!prompt) return;
@@ -794,22 +933,27 @@ function generateAIText() {
   var text = new fabric.IText(chosen, {
     left:140, top:180, fontSize:22,
     fill:'#ffffff', fontFamily:'Arial',
-    fontWeight:'bold', textAlign:'center',
-    editable:true
+    fontWeight:'bold', textAlign:'center', editable:true
   });
   fabricCanvas.add(text);
   fabricCanvas.setActiveObject(text);
   fabricCanvas.renderAll();
 }
 
+// ── KEYBOARD SHORTCUTS ───────────────────────────
 document.addEventListener('keydown', function(e) {
-  if ((e.key === 'Delete' || e.key === 'Backspace') && fabricCanvas) {
-    var active = fabricCanvas.getActiveObject();
-    if (active && active !== printArea && active.type !== 'i-text') {
-      fabricCanvas.remove(active);
-      fabricCanvas.renderAll();
-    }
+  if (!fabricCanvas) return;
+  var active = fabricCanvas.getActiveObject();
+  if (!active || active === printArea) return;
+  // Delete key (not while editing text)
+  if ((e.key === 'Delete') && active.type !== 'i-text') {
+    fabricCanvas.remove(active); fabricCanvas.renderAll();
   }
+  // Arrow keys to nudge
+  if (e.key === 'ArrowLeft')  { active.left -= 2; active.setCoords(); fabricCanvas.renderAll(); }
+  if (e.key === 'ArrowRight') { active.left += 2; active.setCoords(); fabricCanvas.renderAll(); }
+  if (e.key === 'ArrowUp')    { active.top  -= 2; active.setCoords(); fabricCanvas.renderAll(); }
+  if (e.key === 'ArrowDown')  { active.top  += 2; active.setCoords(); fabricCanvas.renderAll(); }
 });
 
 </script>
